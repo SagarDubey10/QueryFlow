@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Database Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="main-layout">
+        
+        <aside class="sidebar">
+            <h2>📊 Database Explorer</h2>
+            <p>Here is the data you can ask about:</p>
+            
+            <div class="schema-card">
+                <h3>🏢 departments</h3>
+                <ul>
+                    <li><strong>id</strong> <span class="type-badge">INT</span></li>
+                    <li><strong>name</strong> <span class="type-badge">TEXT</span></li>
+                    <li><strong>location</strong> <span class="type-badge">TEXT</span></li>
+                </ul>
+            </div>
+
+            <div class="schema-card">
+                <h3>👥 employees</h3>
+                <ul>
+                    <li><strong>id</strong> <span class="type-badge">INT</span></li>
+                    <li><strong>name</strong> <span class="type-badge">TEXT</span></li>
+                    <li><strong>age</strong> <span class="type-badge">INT</span></li>
+                    <li><strong>salary</strong> <span class="type-badge">INT</span></li>
+                    <li><strong>dept_id</strong> <span class="type-badge">INT</span> <i>(Links to departments)</i></li>
+                </ul>
+            </div>
+
+            <div class="suggestions">
+                <h3>💡 Try asking:</h3>
+                <ul>
+                    <li>"Show all employees and their department names"</li>
+                    <li>"What is the average salary in Engineering?"</li>
+                    <li>"Who is the oldest employee in Sales?"</li>
+                </ul>
+            </div>
+        </aside>
+
+        <div class="content">
+            <h1>Ask your database anything.</h1>
+            <p class="subtitle">Type a question in plain English, and the AI will write and run the SQL for you.</p>
+
+            <form action="/query" method="POST" id="query-form">
+                <input type="text" name="nl_input" placeholder="e.g., Show me all employees earning more than 80000" value="{{ nl_input }}" required autocomplete="off">
+                <button type="submit" id="submit-btn">Generate ✨</button>
+                <button type="button" id="loading-btn" style="display: none; background-color: #94a3b8; cursor: not-allowed;" disabled>Thinking... ⏳</button>
+            </form>
+
+            <script>
+                document.getElementById('query-form').addEventListener('submit', function() {
+                    document.getElementById('submit-btn').style.display = 'none';
+                    document.getElementById('loading-btn').style.display = 'block';
+                });
+            </script>
+
+            {% if sql_query %}
+            <div class="output-section">
+                
+                <h3>AI Generated SQL</h3>
+                <div class="sql-box">{{ sql_query }}</div>
+
+                <h3>Data Results</h3>
+                {% if error %}
+                    <p class="error">⚠️ {{ error }}</p>
+                {% elif results %}
+                    <table>
+                        <thead>
+                            <tr>
+                                {% for key in results[0].keys() %}
+                                    <th>{{ key }}</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in results %}
+                                <tr>
+                                    {% for value in row.values() %}
+                                        <td>{{ value }}</td>
+                                    {% endfor %}
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p style="color: #64748b; font-style: italic;">The query ran successfully, but returned 0 rows.</p>
+                {% endif %}
+                
+            </div>
+            {% endif %}
+        </div>
+        
+    </div>
+</body>
+</html>
