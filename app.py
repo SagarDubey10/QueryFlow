@@ -95,6 +95,26 @@ User query: {nl_text}"""
     except Exception as e:
         return f"ERROR: AI Generation failed. {str(e)}"
 
+# --- Security Guardrail: Read-Only Mode ---
+def is_safe_query(sql_query):
+    """
+    Checks the SQL string for dangerous modification commands.
+    Returns True if safe (SELECT only), False if dangerous.
+    """
+    upper_sql = sql_query.upper()
+    
+    # List of SQL commands that modify or destroy data
+    dangerous_keywords = [
+        r'\bDROP\b', r'\bDELETE\b', r'\bUPDATE\b', 
+        r'\bINSERT\b', r'\bALTER\b', r'\bTRUNCATE\b', r'\bREPLACE\b'
+    ]
+    
+    for keyword in dangerous_keywords:
+        if re.search(keyword, upper_sql):
+            return False
+            
+    return True
+
 # --- Flask Routes ---
 @app.route('/', methods=['GET'])
 def index():
@@ -109,17 +129,21 @@ def query():
     error_msg = None
     
     if not sql_query.startswith("ERROR"):
-        try:
-            conn = sqlite3.connect('database.db')
-            conn.row_factory = sqlite3.Row
-            cursor = conn.cursor()
-            
-            cursor.execute(sql_query)
-            results = [dict(row) for row in cursor.fetchall()]
-            
-            conn.close()
-        except Exception as e:
-            error_msg = f"SQL Execution Error: {str(e)}"
+        # --- NEW SECURITY CHECK ---
+        if not is_safe_query(sql_query):
+            error_msg = "🛡️ Security Alert: QueryFlow is currently in Read-Only mode. Commands that modify or delete data are blocked."
+        else:
+            try:
+                conn = sqlite3.connect('database.db')
+                conn.row_factory = sqlite3.Row
+                cursor = conn.cursor()
+                
+                cursor.execute(sql_query)
+                results = [dict(row) for row in cursor.fetchall()]
+                
+                conn.close()
+            except Exception as e:
+                error_msg = f"SQL Execution Error: {str(e)}"
     else:
         error_msg = sql_query
         
