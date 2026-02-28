@@ -92,8 +92,15 @@ User query: {nl_text}"""
             sql = match.group(1).strip()
             
         return sql
+        
     except Exception as e:
-        return f"ERROR: AI Generation failed. {str(e)}"
+        # 1. Print the ugly technical error to the terminal for YOU (the developer)
+        print(f"\n--- BACKEND ERROR LOG ---")
+        print(f"AI Generation Failed: {str(e)}")
+        print(f"-------------------------\n")
+        
+        # 2. Return a clean, professional error to the USER (the frontend)
+        return "ERROR: Our AI assistant is currently experiencing connection issues. Please try again in a moment."
 
 # --- Security Guardrail: Read-Only Mode ---
 def is_safe_query(sql_query):
