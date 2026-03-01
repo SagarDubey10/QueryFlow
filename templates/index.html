@@ -3,52 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Database Assistant</title>
+    <title>QueryFlow | AI Database Assistant</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class="main-layout">
         
         <aside class="sidebar">
-            <h2>📊 Database Explorer</h2>
+            <h2>📊 QueryFlow Schema</h2>
             <p>Here is the data you can ask about:</p>
             
             <div class="schema-card">
                 <h3>🏢 departments</h3>
-                <ul>
-                    <li><strong>id</strong> <span class="type-badge">INT</span></li>
-                    <li><strong>name</strong> <span class="type-badge">TEXT</span></li>
-                    <li><strong>location</strong> <span class="type-badge">TEXT</span></li>
-                </ul>
+                <ul><li><strong>id</strong></li><li><strong>name</strong></li><li><strong>location</strong></li></ul>
             </div>
 
             <div class="schema-card">
                 <h3>👥 employees</h3>
-                <ul>
-                    <li><strong>id</strong> <span class="type-badge">INT</span></li>
-                    <li><strong>name</strong> <span class="type-badge">TEXT</span></li>
-                    <li><strong>age</strong> <span class="type-badge">INT</span></li>
-                    <li><strong>salary</strong> <span class="type-badge">INT</span></li>
-                    <li><strong>dept_id</strong> <span class="type-badge">INT</span> <i>(Links to departments)</i></li>
-                </ul>
+                <ul><li><strong>id</strong></li><li><strong>name</strong></li><li><strong>salary</strong></li><li><strong>dept_id</strong></li></ul>
+            </div>
+            
+            <div class="schema-card">
+                <h3>🚀 projects</h3>
+                <ul><li><strong>id</strong></li><li><strong>title</strong></li><li><strong>budget</strong></li></ul>
+            </div>
+
+            <div class="schema-card">
+                <h3>🔗 employee_projects</h3>
+                <ul><li><strong>emp_id</strong></li><li><strong>project_id</strong></li><li><strong>hours_allocated</strong></li></ul>
             </div>
 
             <div class="suggestions">
                 <h3>💡 Try asking:</h3>
                 <ul>
-                    <li>"Show all employees and their department names"</li>
-                    <li>"What is the average salary in Engineering?"</li>
-                    <li>"Who is the oldest employee in Sales?"</li>
+                    <li>"Who is working on the AI Dashboard project?"</li>
+                    <li>"Show the total budget for all projects."</li>
                 </ul>
             </div>
         </aside>
 
         <div class="content">
-            <h1>Ask your database anything.</h1>
+            <h1>Ask QueryFlow anything.</h1>
             <p class="subtitle">Type a question in plain English, and the AI will write and run the SQL for you.</p>
 
             <form action="/query" method="POST" id="query-form">
-                <input type="text" name="nl_input" placeholder="e.g., Show me all employees earning more than 80000" value="{{ nl_input }}" required autocomplete="off">
+                <input type="text" name="nl_input" placeholder="e.g., Which employees are in New York?" value="{{ nl_input }}" required autocomplete="off">
                 <button type="submit" id="submit-btn">Generate ✨</button>
                 <button type="button" id="loading-btn" style="display: none; background-color: #94a3b8; cursor: not-allowed;" disabled>Thinking... ⏳</button>
             </form>
@@ -64,11 +63,21 @@
             <div class="output-section">
                 
                 <h3>AI Generated SQL</h3>
-                <div class="sql-box">{{ sql_query }}</div>
+                <<div class="sql-box"><pre style="margin: 0; font-family: inherit;">{{ sql_query }}</pre></div>
 
-                <h3>Data Results</h3>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; margin-bottom: 1rem;">
+                    <h3 style="margin: 0;">Data Results</h3>
+                    
+                    {% if results and not error %}
+                    <form action="/export" method="POST" style="margin: 0; padding: 0; box-shadow: none; background: transparent;">
+                        <input type="hidden" name="sql_query" value="{{ sql_query }}">
+                        <button type="submit" style="background-color: #10b981; padding: 8px 16px; font-size: 0.9rem;">💾 Download CSV</button>
+                    </form>
+                    {% endif %}
+                </div>
+
                 {% if error %}
-                    <p class="error">⚠️ {{ error }}</p>
+                    <p class="error">{{ error }}</p>
                 {% elif results %}
                     <table>
                         <thead>
