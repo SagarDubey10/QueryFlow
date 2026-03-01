@@ -15,20 +15,10 @@ body {
     min-height: 100vh;
 }
 
-/* Mobile & Small Screen Adaptation */
 @media (max-width: 900px) {
-    .main-layout {
-        flex-direction: column; /* Stacks the sidebar on top of the content */
-    }
-    .sidebar {
-        width: 100% !important;
-        border-right: none !important;
-        border-bottom: 1px solid #e2e8f0;
-        max-height: 400px;
-    }
-    .content {
-        padding: 2rem !important;
-    }
+    .main-layout { flex-direction: column; }
+    .sidebar { width: 100% !important; border-right: none !important; border-bottom: 1px solid #e2e8f0; max-height: 400px; }
+    .content { padding: 2rem !important; }
 }
 
 /* --- Sidebar --- */
@@ -39,6 +29,21 @@ body {
     padding: 2rem;
     overflow-y: auto;
     box-shadow: 2px 0 10px rgba(0,0,0,0.02);
+}
+
+/* NEW: Custom Sleek Scrollbar for Sidebar */
+.sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+.sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+.sidebar::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 10px;
+}
+.sidebar::-webkit-scrollbar-thumb:hover {
+    background-color: #94a3b8;
 }
 
 .sidebar h2 { font-size: 1.25rem; color: #0f172a; margin-bottom: 0.5rem; }
@@ -52,25 +57,11 @@ body {
     margin-bottom: 1rem;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-
-.schema-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-}
-
+.schema-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
 .schema-card h3 { font-size: 1rem; color: #1e293b; margin-bottom: 0.5rem; }
 .schema-card ul { list-style: none; }
 .schema-card li { font-size: 0.85rem; padding: 4px 0; color: #475569; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between;}
 .schema-card li:last-child { border-bottom: none; }
-
-.type-badge {
-    background: #e2e8f0;
-    color: #475569;
-    font-size: 0.7rem;
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-weight: bold;
-}
 
 /* --- Content Area --- */
 .content {
@@ -94,10 +85,7 @@ form {
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     transition: box-shadow 0.3s ease;
 }
-
-form:focus-within {
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
-}
+form:focus-within { box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3); }
 
 input[type="text"] {
     flex: 1;
@@ -120,8 +108,43 @@ button {
     font-weight: 600;
     transition: all 0.2s ease;
 }
-
 button:hover { background-color: #2563eb; transform: scale(1.02); }
+
+/* NEW: Clickable Suggestion Chips */
+.quick-prompts {
+    margin-top: -1rem;
+    margin-bottom: 2rem;
+    animation: slideUp 0.4s ease forwards;
+}
+.quick-prompts p {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+.prompt-chips {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.chip {
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    color: #475569;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: normal;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.chip:hover {
+    background: #e0f2fe;
+    border-color: #7dd3fc;
+    color: #0369a1;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
 
 /* --- Dynamic Animations for Results --- */
 @keyframes slideUp {
@@ -134,23 +157,20 @@ button:hover { background-color: #2563eb; transform: scale(1.02); }
     padding: 2rem;
     border-radius: 12px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; /* Smooth slide-in */
+    animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* Beautiful SQL Code Block */
 .sql-box {
     background-color: #1e293b; 
     color: #38bdf8;
     padding: 1.5rem;
     border-radius: 8px;
-    font-family: "Courier New", Courier, monospace;
     font-size: 1.05rem;
     overflow-x: auto;
-    white-space: pre-wrap; /* Honors the line breaks from our new AI prompt */
+    white-space: pre-wrap; 
     border-left: 4px solid #3b82f6;
 }
 
-/* Dynamic Table Hover Effects */
 table { width: 100%; border-collapse: collapse; margin-top: 0.5rem; }
 th, td { padding: 12px 16px; text-align: left; border-bottom: 1px solid #e2e8f0; }
 th { background-color: #f8fafc; color: #475569; font-weight: 600; font-size: 0.9rem; text-transform: uppercase; }

@@ -32,14 +32,6 @@
                 <h3>🔗 employee_projects</h3>
                 <ul><li><strong>emp_id</strong></li><li><strong>project_id</strong></li><li><strong>hours_allocated</strong></li></ul>
             </div>
-
-            <div class="suggestions">
-                <h3>💡 Try asking:</h3>
-                <ul>
-                    <li>"Who is working on the AI Dashboard project?"</li>
-                    <li>"Show the total budget for all projects."</li>
-                </ul>
-            </div>
         </aside>
 
         <div class="content">
@@ -52,18 +44,42 @@
                 <button type="button" id="loading-btn" style="display: none; background-color: #94a3b8; cursor: not-allowed;" disabled>Thinking... ⏳</button>
             </form>
 
+            {% if not sql_query %}
+            <div class="quick-prompts" id="prompt-suggestions">
+                <p>✨ Try asking:</p>
+                <div class="prompt-chips">
+                    <button type="button" class="chip" onclick="fillAndSubmit('Who is working on the AI Dashboard project?')">Who is working on the AI Dashboard project?</button>
+                    <button type="button" class="chip" onclick="fillAndSubmit('Show the total budget for all projects.')">Show the total budget for all projects.</button>
+                    <button type="button" class="chip" onclick="fillAndSubmit('What is the average salary in Engineering?')">What is the average salary in Engineering?</button>
+                </div>
+            </div>
+            {% endif %}
+
             <script>
+                // Form submit loading animation
                 document.getElementById('query-form').addEventListener('submit', function() {
                     document.getElementById('submit-btn').style.display = 'none';
                     document.getElementById('loading-btn').style.display = 'block';
                 });
+
+                // Function to auto-fill the input and click submit when a chip is clicked
+                function fillAndSubmit(queryText) {
+                    // Hide the chips immediately for a smooth feel
+                    document.getElementById('prompt-suggestions').style.display = 'none';
+                    
+                    // Fill the input box
+                    document.querySelector('input[name="nl_input"]').value = queryText;
+                    
+                    // Automatically click the submit button
+                    document.getElementById('submit-btn').click();
+                }
             </script>
 
             {% if sql_query %}
             <div class="output-section">
                 
                 <h3>AI Generated SQL</h3>
-                <<div class="sql-box"><pre style="margin: 0; font-family: inherit;">{{ sql_query }}</pre></div>
+                <div class="sql-box"><pre style="margin: 0; font-family: inherit;">{{ sql_query }}</pre></div>
 
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; margin-bottom: 1rem;">
                     <h3 style="margin: 0;">Data Results</h3>
