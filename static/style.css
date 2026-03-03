@@ -1,4 +1,49 @@
-/* --- Global Reset & Typography --- */
+/* --- Ultra-Premium Soft UI Palette --- */
+:root {
+    /* LIGHT MODE: Soft, easy on the eyes, elegant depth */
+    --bg-color: #f1f5f9;
+    --text-main: #334155;
+    --text-muted: #64748b;
+
+    --card-bg: #ffffff;
+    --card-border: #e2e8f0;
+    --card-hover: #f8fafc;
+
+    --input-bg: #ffffff;
+    --input-border: #cbd5e1;
+    --input-focus: rgba(59, 130, 246, 0.15);
+
+    --sql-bg: #1e293b;
+    /* Keeps the code block dark and beautiful */
+    --sql-text: #f8fafc;
+    --sql-keyword: #c678dd;
+    --sql-string: #98c379;
+    --sql-number: #d19a66;
+
+    --table-header: #f8fafc;
+    --table-hover: #f1f5f9;
+}
+
+[data-theme="dark"] {
+    /* DARK MODE: Deep, rich midnight slate */
+    --bg-color: #0f172a;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+
+    --card-bg: #1e293b;
+    --card-border: #334155;
+    --card-hover: #2dd4bf;
+
+    --input-bg: #0f172a;
+    --input-border: #334155;
+    --input-focus: rgba(56, 189, 248, 0.2);
+
+    --sql-bg: #0b0f19;
+
+    --table-header: #0f172a;
+    --table-hover: #1e293b;
+}
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -7,12 +52,44 @@
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background-color: #f8fafc;
-    color: #334155;
+    background-color: var(--bg-color);
+    color: var(--text-main);
     line-height: 1.6;
+    transition: background-color 0.4s ease, color 0.4s ease;
+    min-height: 100vh;
+    /* Softly fades the entire page in on load to mask browser flashes */
+    animation: pageLoad 0.5s ease-out;
 }
 
-/* --- Layout & Responsiveness --- */
+@keyframes pageLoad {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Elegant Global Scrollbars */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: var(--card-border);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--text-muted);
+}
+
 .main-layout {
     display: flex;
     flex-direction: row;
@@ -27,7 +104,7 @@ body {
     .sidebar {
         width: 100% !important;
         border-right: none !important;
-        border-bottom: 1px solid #e2e8f0;
+        border-bottom: 1px solid var(--card-border);
         max-height: 400px;
     }
 
@@ -38,79 +115,50 @@ body {
 
 /* --- Sidebar --- */
 .sidebar {
-    width: 320px;
-    background-color: #ffffff;
-    border-right: 1px solid #e2e8f0;
-    padding: 2rem;
+    width: 340px;
+    background: var(--card-bg);
+    border-right: 1px solid var(--card-border);
+    padding: 2.5rem 2rem;
     overflow-y: auto;
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.02);
+    transition: background 0.4s, border 0.4s;
 }
 
-/* NEW: Custom Sleek Scrollbar for Sidebar */
-/* --- Elegant Custom Scrollbars (Global) --- */
-::-webkit-scrollbar {
-    width: 8px;
-    /* Width for vertical scrollbars */
-    height: 8px;
-    /* Height for horizontal scrollbars (like the SQL box) */
+.icon-btn {
+    background: transparent;
+    border: 1px solid var(--card-border);
+    color: var(--text-main);
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: all 0.2s;
 }
 
-::-webkit-scrollbar-track {
-    background: #f8fafc;
-    /* Matches your background color */
-    border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb {
-    background-color: #cbd5e1;
-    border-radius: 10px;
-    border: 2px solid #f8fafc;
-    /* Creates a nice padding effect */
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background-color: #94a3b8;
-}
-
-/* Ensure the sidebar track blends in perfectly */
-.sidebar::-webkit-scrollbar-track {
-    background: #ffffff;
-}
-
-.sidebar::-webkit-scrollbar-thumb {
-    border: 2px solid #ffffff;
-}
-
-.sidebar h2 {
-    font-size: 1.25rem;
-    color: #0f172a;
-    margin-bottom: 0.5rem;
-}
-
-.sidebar p {
-    font-size: 0.9rem;
-    color: #64748b;
-    margin-bottom: 1.5rem;
+.icon-btn:hover {
+    background: var(--bg-color);
+    transform: translateY(-1px);
 }
 
 .schema-card {
-    background: #f1f5f9;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    padding: 1rem;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 1.2rem;
     margin-bottom: 1rem;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    transition: all 0.2s ease;
 }
 
 .schema-card:hover {
     transform: translateY(-2px);
+    border-color: var(--text-muted);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .schema-card h3 {
-    font-size: 1rem;
-    color: #1e293b;
+    font-size: 0.95rem;
     margin-bottom: 0.5rem;
+    color: var(--text-main);
 }
 
 .schema-card ul {
@@ -119,125 +167,139 @@ body {
 
 .schema-card li {
     font-size: 0.85rem;
-    padding: 4px 0;
-    color: #475569;
-    border-bottom: 1px solid #e2e8f0;
+    padding: 6px 0;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--card-border);
     display: flex;
     justify-content: space-between;
 }
 
 .schema-card li:last-child {
     border-bottom: none;
+    padding-bottom: 0;
 }
 
 /* --- Content Area --- */
 .content {
     flex: 1;
-    padding: 3rem 4rem;
+    padding: 4rem;
     max-width: 1100px;
     margin: 0 auto;
 }
 
-.content h1 {
-    font-size: 2.5rem;
-    color: #0f172a;
+.gradient-text {
+    font-size: 3rem;
     margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
 }
 
 .subtitle {
-    color: #64748b;
-    font-size: 1.1rem;
-    margin-bottom: 2rem;
+    color: var(--text-muted);
+    font-size: 1.15rem;
+    margin-bottom: 2.5rem;
 }
 
-/* Dynamic Form */
+/* Premium Form */
 form {
     display: flex;
-    gap: 10px;
+    gap: 12px;
     margin-bottom: 2rem;
-    background: #ffffff;
-    padding: 10px;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    transition: box-shadow 0.3s ease;
+    background: var(--card-bg);
+    padding: 8px;
+    border-radius: 14px;
+    border: 1px solid var(--card-border);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+    transition: all 0.3s ease;
 }
 
 form:focus-within {
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 4px var(--input-focus);
 }
 
 input[type="text"] {
     flex: 1;
-    padding: 16px 20px;
+    padding: 14px 20px;
     font-size: 1.1rem;
     border: none;
     background: transparent;
     outline: none;
-    color: #1e293b;
+    color: var(--text-main);
 }
 
-button {
-    padding: 0 24px;
+input[type="text"]::placeholder {
+    color: var(--text-muted);
+}
+
+.primary-btn {
+    padding: 0 28px;
     font-size: 1rem;
     background-color: #3b82f6;
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
     cursor: pointer;
     font-weight: 600;
     transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
-button:hover {
+.primary-btn:hover {
     background-color: #2563eb;
-    transform: scale(1.02);
 }
 
-/* NEW: Clickable Suggestion Chips */
-.quick-prompts {
-    margin-top: -1rem;
-    margin-bottom: 2rem;
-    animation: slideUp 0.4s ease forwards;
+/* Spinner for Loading State */
+.spinner {
+    width: 18px;
+    height: 18px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 1s ease-in-out infinite;
 }
 
-.quick-prompts p {
-    font-size: 0.85rem;
-    color: #64748b;
-    margin-bottom: 8px;
-    font-weight: 600;
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
 }
 
+/* Quick Prompts */
 .prompt-chips {
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
+    margin-top: 10px;
 }
 
 .chip {
-    background: #f1f5f9;
-    border: 1px solid #e2e8f0;
-    color: #475569;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    color: var(--text-main);
     padding: 8px 16px;
     border-radius: 20px;
     font-size: 0.85rem;
-    font-weight: normal;
     cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
     transition: all 0.2s ease;
 }
 
 .chip:hover {
-    background: #e0f2fe;
-    border-color: #7dd3fc;
-    color: #0369a1;
-    transform: translateY(-2px);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    background: var(--input-focus);
+    border-color: #3b82f6;
+    color: #3b82f6;
 }
 
-/* --- Dynamic Animations for Results --- */
-@keyframes slideUp {
+/* --- Staggered Output Animations (Fixes the sudden data dump) --- */
+@keyframes slideFadeUp {
     from {
         opacity: 0;
-        transform: translateY(20px);
+        transform: translateY(15px);
     }
 
     to {
@@ -247,43 +309,117 @@ button:hover {
 }
 
 .output-section {
-    background: #ffffff;
-    padding: 2rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    background: transparent;
+    padding: 0;
+}
+
+/* Stagger 1: SQL Code slides in immediately */
+.stagger-1 {
+    opacity: 0;
+    animation: slideFadeUp 0.6s ease-out 0.1s forwards;
+}
+
+/* Stagger 2: Table softly fades in 0.6 seconds LATER */
+.stagger-2 {
+    opacity: 0;
+    animation: slideFadeUp 0.7s ease-out 0.7s forwards;
+}
+
+.code-wrapper {
+    position: relative;
+    margin-top: 1rem;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+}
+
+.copy-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #e2e8f0;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.copy-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
 }
 
 .sql-box {
-    background-color: #1e293b;
-    color: #38bdf8;
-    padding: 1.5rem;
-    border-radius: 8px;
+    background-color: var(--sql-bg);
+    color: var(--sql-text);
+    padding: 2rem 1.5rem 1.5rem 1.5rem;
     font-size: 1.05rem;
     overflow-x: auto;
-    white-space: pre-wrap;
-    border-left: 4px solid #3b82f6;
+    border-top: 4px solid #3b82f6;
+}
+
+/* Authentic IDE Syntax Colors */
+.sql-keyword {
+    color: var(--sql-keyword);
+    font-weight: bold;
+}
+
+.sql-string {
+    color: var(--sql-string);
+}
+
+.sql-number {
+    color: var(--sql-number);
+}
+
+/* Data Tables */
+.export-btn {
+    background-color: #10b981;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.export-btn:hover {
+    background-color: #059669;
+    transform: translateY(-1px);
+}
+
+.table-container {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.03);
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 0.5rem;
 }
 
 th,
 td {
-    padding: 12px 16px;
+    padding: 14px 20px;
     text-align: left;
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid var(--card-border);
 }
 
 th {
-    background-color: #f8fafc;
-    color: #475569;
+    background-color: var(--table-header);
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
 }
 
 tr {
@@ -291,13 +427,18 @@ tr {
 }
 
 tr:hover {
-    background-color: #f1f5f9;
+    background-color: var(--table-hover);
+}
+
+tr:last-child td {
+    border-bottom: none;
 }
 
 .error {
-    background: #fef2f2;
+    background: rgba(239, 68, 68, 0.1);
     color: #ef4444;
     padding: 1rem;
+    margin: 1rem;
     border-radius: 8px;
     border-left: 4px solid #ef4444;
     font-weight: 500;

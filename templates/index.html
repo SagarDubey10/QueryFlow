@@ -10,24 +10,25 @@
     <div class="main-layout">
         
         <aside class="sidebar">
-            <h2>📊 QueryFlow Schema</h2>
-            <p>Here is the data you can ask about:</p>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <h2 style="margin: 0; display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 1.5rem;">🌊</span> QueryFlow
+                </h2>
+                <button id="theme-btn" class="icon-btn" onclick="toggleTheme()" title="Toggle Dark Mode">🌙</button>
+            </div>
             
             <div class="schema-card">
                 <h3>🏢 departments</h3>
                 <ul><li><strong>id</strong></li><li><strong>name</strong></li><li><strong>location</strong></li></ul>
             </div>
-
             <div class="schema-card">
                 <h3>👥 employees</h3>
                 <ul><li><strong>id</strong></li><li><strong>name</strong></li><li><strong>salary</strong></li><li><strong>dept_id</strong></li></ul>
             </div>
-            
             <div class="schema-card">
                 <h3>🚀 projects</h3>
                 <ul><li><strong>id</strong></li><li><strong>title</strong></li><li><strong>budget</strong></li></ul>
             </div>
-
             <div class="schema-card">
                 <h3>🔗 employee_projects</h3>
                 <ul><li><strong>emp_id</strong></li><li><strong>project_id</strong></li><li><strong>hours_allocated</strong></li></ul>
@@ -35,13 +36,15 @@
         </aside>
 
         <div class="content">
-            <h1>Ask QueryFlow anything.</h1>
+            <h1 class="gradient-text">Ask QueryFlow anything.</h1>
             <p class="subtitle">Type a question in plain English, and the AI will write and run the SQL for you.</p>
 
             <form action="/query" method="POST" id="query-form">
                 <input type="text" name="nl_input" placeholder="e.g., Which employees are in New York?" value="{{ nl_input }}" required autocomplete="off">
-                <button type="submit" id="submit-btn">Generate ✨</button>
-                <button type="button" id="loading-btn" style="display: none; background-color: #94a3b8; cursor: not-allowed;" disabled>Thinking... ⏳</button>
+                <button type="submit" id="submit-btn" class="primary-btn">Generate ✨</button>
+                <button type="button" id="loading-btn" class="primary-btn loading-btn" style="display: none;" disabled>
+                    <div class="spinner"></div> Generating...
+                </button>
             </form>
 
             {% if not sql_query %}
@@ -55,72 +58,113 @@
             </div>
             {% endif %}
 
-            <script>
-                // Form submit loading animation
-                document.getElementById('query-form').addEventListener('submit', function() {
-                    document.getElementById('submit-btn').style.display = 'none';
-                    document.getElementById('loading-btn').style.display = 'block';
-                });
-
-                // Function to auto-fill the input and click submit when a chip is clicked
-                function fillAndSubmit(queryText) {
-                    // Hide the chips immediately for a smooth feel
-                    document.getElementById('prompt-suggestions').style.display = 'none';
-                    
-                    // Fill the input box
-                    document.querySelector('input[name="nl_input"]').value = queryText;
-                    
-                    // Automatically click the submit button
-                    document.getElementById('submit-btn').click();
-                }
-            </script>
-
             {% if sql_query %}
-            <div class="output-section">
+            <div class="output-section" id="results-area">
                 
-                <h3>AI Generated SQL</h3>
-                <div class="sql-box"><pre style="margin: 0; font-family: inherit;">{{ sql_query }}</pre></div>
-
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; margin-bottom: 1rem;">
-                    <h3 style="margin: 0;">Data Results</h3>
-                    
-                    {% if results and not error %}
-                    <form action="/export" method="POST" style="margin: 0; padding: 0; box-shadow: none; background: transparent;">
-                        <input type="hidden" name="sql_query" value="{{ sql_query }}">
-                        <button type="submit" style="background-color: #10b981; padding: 8px 16px; font-size: 0.9rem;">💾 Download CSV</button>
-                    </form>
-                    {% endif %}
+                <div class="stagger-1">
+                    <h3>AI Generated SQL</h3>
+                    <div class="code-wrapper">
+                        <button id="copy-btn" class="copy-btn" onclick="copySQL()" title="Copy to clipboard">📋 Copy</button>
+                        <div id="raw-sql" style="display: none;">{{ sql_query }}</div>
+                        <div class="sql-box"><pre id="sql-display" style="margin: 0; font-family: inherit;">{{ sql_query }}</pre></div>
+                    </div>
                 </div>
 
-                {% if error %}
-                    <p class="error">{{ error }}</p>
-                {% elif results %}
-                    <table>
-                        <thead>
-                            <tr>
-                                {% for key in results[0].keys() %}
-                                    <th>{{ key }}</th>
-                                {% endfor %}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for row in results %}
-                                <tr>
-                                    {% for value in row.values() %}
-                                        <td>{{ value }}</td>
-                                    {% endfor %}
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                {% else %}
-                    <p style="color: #64748b; font-style: italic;">The query ran successfully, but returned 0 rows.</p>
-                {% endif %}
-                
+                <div class="stagger-2">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; margin-bottom: 1rem;">
+                        <h3 style="margin: 0;">Data Results</h3>
+                        {% if results and not error %}
+                        <form action="/export" method="POST" style="margin: 0; padding: 0; box-shadow: none; background: transparent; border: none;">
+                            <input type="hidden" name="sql_query" value="{{ sql_query }}">
+                            <button type="submit" class="export-btn">💾 Download CSV</button>
+                        </form>
+                        {% endif %}
+                    </div>
+
+                    <div class="table-container">
+                        {% if error %}
+                            <p class="error">{{ error }}</p>
+                        {% elif results %}
+                            <table>
+                                <thead><tr>{% for key in results[0].keys() %}<th>{{ key }}</th>{% endfor %}</tr></thead>
+                                <tbody>{% for row in results %}<tr>{% for value in row.values() %}<td>{{ value }}</td>{% endfor %}</tr>{% endfor %}</tbody>
+                            </table>
+                        {% else %}
+                            <p style="color: var(--text-muted); font-style: italic; padding: 1rem;">The query ran successfully, but returned 0 rows.</p>
+                        {% endif %}
+                    </div>
+                </div>
+
             </div>
             {% endif %}
         </div>
-        
     </div>
+
+    <script>
+        // Check local storage for theme preference
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
+            document.getElementById('theme-btn').innerText = '☀️';
+        }
+
+        document.getElementById('query-form').addEventListener('submit', function() {
+            document.getElementById('submit-btn').style.display = 'none';
+            document.getElementById('loading-btn').style.display = 'flex';
+            
+            // Softly fade out old results to mask the upcoming browser reload
+            const output = document.getElementById('results-area');
+            if(output) {
+                output.style.opacity = '0.3';
+            }
+        });
+
+        function fillAndSubmit(queryText) {
+            document.getElementById('prompt-suggestions').style.display = 'none';
+            document.querySelector('input[name="nl_input"]').value = queryText;
+            document.getElementById('submit-btn').click();
+        }
+
+        function toggleTheme() {
+            const body = document.body;
+            const btn = document.getElementById('theme-btn');
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'light');
+                btn.innerText = '🌙';
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+                btn.innerText = '☀️';
+            }
+        }
+
+        function copySQL() {
+            const text = document.getElementById('raw-sql').innerText;
+            navigator.clipboard.writeText(text);
+            const btn = document.getElementById('copy-btn');
+            btn.innerText = '✅ Copied!';
+            setTimeout(() => { btn.innerText = '📋 Copy'; }, 2000);
+        }
+
+        // Instant Syntax Highlighting
+        window.onload = function() {
+            const rawSqlDiv = document.getElementById('raw-sql');
+            if (rawSqlDiv) {
+                const text = rawSqlDiv.innerText;
+                const display = document.getElementById('sql-display');
+                
+                let highlighted = text;
+                // Strings (Green)
+                highlighted = highlighted.replace(/('.*?')/g, '<span class="sql-string">$1</span>');
+                // Numbers (Orange)
+                highlighted = highlighted.replace(/\b(\d+)\b/g, '<span class="sql-number">$1</span>');
+                // SQL Keywords (Purple)
+                const keywords = /\b(SELECT|FROM|WHERE|JOIN|ON|AND|OR|GROUP BY|ORDER BY|LIMIT|INSERT|UPDATE|DELETE|AS|LEFT|RIGHT|INNER|OUTER|COUNT|AVG|SUM|MIN|MAX)\b/gi;
+                highlighted = highlighted.replace(keywords, '<span class="sql-keyword">$1</span>');
+                
+                display.innerHTML = highlighted;
+            }
+        };
+    </script>
 </body>
 </html>
